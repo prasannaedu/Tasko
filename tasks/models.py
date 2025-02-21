@@ -126,7 +126,7 @@ from django.db.models.signals import pre_save
 post_save.connect(auto_translate_task, sender=Task)
 
 @receiver(post_save, sender=User)
-def crate_user_profile(sender, instance, created, **kwargs):
+def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
         print('Profile created!')

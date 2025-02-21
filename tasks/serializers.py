@@ -5,7 +5,7 @@ from .models import Task , UserProfile, Category, Collaboration, Challenge, Comm
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id','title','description','completed','title_en','title_es','title_te','title_hi','description_en','description_es','description_te','description_hi']
+        fields = ['id','title','description','priority','completed','title_en','title_es','title_te','title_hi','description_en','description_es','description_te','description_hi']
     
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
