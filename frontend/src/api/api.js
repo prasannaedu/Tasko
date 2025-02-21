@@ -1,4 +1,4 @@
-import { configure } from "@testing-library/dom";
+// import { configure } from "@testing-library/dom";
 import axios from "axios";
 
 const api = axios.create({

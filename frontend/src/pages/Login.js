@@ -1,24 +1,27 @@
 import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import api from "../api/api";
 
 const Login=()=>{
     const [username,setUsername]=useState('');
     const [password,setPassword]=useState('');
     const navigate=useNavigate();
+    const {login}=useAuth();
 
 
     const handleSubmit=async(e)=>{
         e.preventDefault();
         try{
             const response=await api.post('/token/',{username,password});
-            localStorage.setItem('token',response.data.access);
+            login(response.data.access);
+            // localStorage.setItem('token',response.data.access);
             console.log(response.data.access);
             console.log('Successfully logged in')
             navigate('/dashboard');
         }
         catch(error){
-            alert('Log in failed. Check our credentials:',error);
+            alert('Log in failed. Check our credentials',error);
         }
     };
     return(
@@ -35,7 +38,7 @@ const Login=()=>{
                         <input type="password" id="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg"/>
                     </div>
                     <button type="submit" className="w-full bg-gray-800 text-white p-2 rounded-md hover:bg-gray-700">
-                        Log in
+                        Login
                     </button>
 
 
