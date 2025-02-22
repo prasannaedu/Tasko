@@ -8,6 +8,7 @@ export const AuthProvider=({children})=>{
 
     useEffect(()=>{
         const token=localStorage.getItem("token");
+        // setIsAuthenticated(!!token);//this is a trick to convert a string to a boolean. ! converts to boolean and then another ! converts it back to original boolean value
         if(token){
             setIsAuthenticated(true);
         }

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Task, UserProfile, Category, Quote, Collaboration, Community, Post, Challenge
-from .serializers import TaskSerializer, UserProfileSerializer, CategorySerializer, CommunitySerializer, PostSerializer, ChallengeSerializer
+from .serializers import TaskSerializer, UserProfileSerializer, CategorySerializer, CommunitySerializer, PostSerializer, ChallengeSerializer, UserSerializer
 from django.utils import timezone
 from rest_framework import generics
 from rest_framework.response import Response
@@ -12,7 +12,6 @@ from django.contrib.auth.models import User
 import csv
 from django.http import HttpResponse
 from rest_framework.pagination import PageNumberPagination
-
 from tasks import models
 
 # Create your views here.
@@ -107,6 +106,29 @@ class ShareTask(APIView):
     #     task.shared = False
     #     task.save()
     #     return Response({'status': 'task unshared'})
+
+class RegisterUser(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if User.objects.filter(username=request.data['username']).exists():
+            print('Username already exists')
+            return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if User.objects.filter(email=request.data['email']).exists():
+            return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({
+                'user': UserSerializer(user).data,
+                'message': 'User registered successfully.',
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfile(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer

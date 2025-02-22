@@ -1,11 +1,12 @@
 #to import rest_framework serializers moduel we use the following code
 from rest_framework import serializers
 from .models import Task , UserProfile, Category, Collaboration, Challenge, Community, Post, Badge, Achievement
+from django.contrib.auth.models import User
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id','title','description','priority','completed','title_en','title_es','title_te','title_hi','description_en','description_es','description_te','description_hi']
+        fields = ['id','title','description','priority','completed','due_date','title_en','title_es','title_te','title_hi','description_en','description_es','description_te','description_hi']
     
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,3 +43,18 @@ class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
         fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)  # Ensure password is write-only
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password']
+        )
+        return user

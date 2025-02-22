@@ -1,6 +1,7 @@
 import React,{ useEffect,useState} from "react";
 import api from "../api/api";
 import UpdateTaskModal from "../components/UpdateTaskModal";
+import CreateTaskModal from '../components/CreateTaskModal';
 
 
 const Dashboard=()=>{
@@ -8,21 +9,36 @@ const Dashboard=()=>{
     const [tasks,setTasks]=useState([]);
     const [selectedTask,setSelectedTask]=useState(null);
     const [taskToUpdate,setTaskToUpdate]=useState(null);
+    const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
 
     useEffect(()=>{
         const fetchTasks=async()=>{
             try{
-                const response=await api.get('tasks/');
-                setTasks(response.data);
+                const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("No token found");
+            }
+
+            const response = await api.get('/tasks/', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setTasks(response.data);
                 // console.log(response.data);
             }catch(error){
                 console.error('Error fetching tasks:',error);
             }
         };
         fetchTasks();
-
         
     },[]);
+    const handleCreateTask = async (taskData) => {
+        try {
+          const response = await api.post('/tasks/', taskData);
+          setTasks([...tasks, response.data]); // Add the new task to the list
+        } catch (error) {
+          console.error('Error creating task:', error);
+        }
+      };
     
         const handleUpdate=async(updatedTask)=>{
             try{
@@ -59,6 +75,11 @@ const Dashboard=()=>{
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
             {/* <p className="text-gray-700">Track your tasks and progress.</p> */}
+            <button
+                onClick={() => setIsCreateTaskModalOpen(true)}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mb-6">
+                Create Task
+            </button>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {tasks.map(task=>(
@@ -68,7 +89,8 @@ const Dashboard=()=>{
                             <input type="checkbox" checked={task.completed} onChange={()=>handleComplete(task.id)} className="ml-2"/>
                         </div>
                         <p className="text-gray-600 mt-2">{task.description}</p>
-                        <p className="text-gray-600 mt-2"><strong>Priority:</strong>{task.priority}</p>
+                        <p className="text-gray-600 mt-2"><strong>Priority: </strong>{task.priority}</p>
+                        <p className="text-gray-600 mt-2"><strong>Due Date: </strong>{new Date(task.due_date).toLocaleString()}</p>
 
                         <div className="mt-4 flex space-x-2">
                             <button onClick={(e)=>{e.stopPropagation();handleDelete(task.id)}} className="text-red-500 hover:text-red-700">
@@ -109,6 +131,11 @@ const Dashboard=()=>{
                         </li>
                     ))}
             </ul> */}
+            <CreateTaskModal
+                isOpen={isCreateTaskModalOpen}
+                onClose={() => setIsCreateTaskModalOpen(false)}
+                onCreate={handleCreateTask}
+            />
         </div>
     );
 };

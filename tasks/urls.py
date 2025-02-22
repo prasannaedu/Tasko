@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList
+from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser
 
 
 urlpatterns = [
@@ -19,5 +19,6 @@ urlpatterns = [
     path('toggle-dark-mode/',ToggleDarkMode.as_view(), name='toggle_dark_mode'),
     path('communities/', CommunityList.as_view(), name='community_list'),
     path('communities/<int:community_id>/posts/', PostList.as_view(), name='post_list'),
+    path('register/', RegisterUser.as_view(), name='register_user'),
 
 ]
