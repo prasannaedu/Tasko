@@ -8,10 +8,15 @@ const Login=()=>{
     const [password,setPassword]=useState('');
     const navigate=useNavigate();
     const {login}=useAuth();
+    const[error,setError]=useState(null);
 
 
     const handleSubmit=async(e)=>{
         e.preventDefault();
+        if (password === '' || username === '') {
+          setError('Please fill in all details.');
+          return;
+        }
         try{
             const response=await api.post('/token/',{username,password});
             login(response.data.access);
@@ -21,7 +26,8 @@ const Login=()=>{
             navigate('/dashboard');
         }
         catch(error){
-            alert('Log in failed. Check our credentials',error);
+            // alert('Log in failed. Check our credentials',error);
+            setError('Log in failed. Check your credentials or please try again later');
         }
     };
     return(
@@ -59,10 +65,11 @@ const Login=()=>{
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
+              className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 transition-colors"
             >
               Login
             </button>
+            {error && <p className="text-red-500 text-center">{error}</p>}
           </form>
 
           {/* Additional Links */}

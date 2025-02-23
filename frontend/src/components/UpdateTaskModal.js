@@ -52,6 +52,11 @@ const UpdateTaskModal=({task,onClose,onUpdate})=>{
                         </select>
                     </div>
                     <div>
+                        <label className="block text-gray-700 mb-2" >Current Due date</label>
+                        {/* <p>{new Date(task.due_date).toLocaleString()}</p> */}
+                        <p>{new Date(task.due_date).toLocaleDateString()}{" "}{new Date(task.due_date).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
+                    <div>
                         <label className="block text-gray-700 mb-2">Due Date</label>
                         <input type="datetime-local"
                                 value={dueDate}

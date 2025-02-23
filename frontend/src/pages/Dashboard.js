@@ -46,6 +46,7 @@ const Dashboard=()=>{
                 setTasks(tasks.map(task=>task.id===updatedTask.id ? updatedTask:task));
             }catch(error){
                 console.error('Error updating task:',error);
+                console.error(error.response.data);
             }
         };
         const handleComplete=async(taskId)=>{
@@ -90,7 +91,7 @@ const Dashboard=()=>{
                         </div>
                         <p className="text-gray-600 mt-2">{task.description}</p>
                         <p className="text-gray-600 mt-2"><strong>Priority: </strong>{task.priority}</p>
-                        <p className="text-gray-600 mt-2"><strong>Due Date: </strong>{new Date(task.due_date).toLocaleString()}</p>
+                        <p className="text-gray-600 mt-2"><strong>Due Date: </strong>{new Date(task.due_date).toLocaleDateString()}{" "}{new Date(task.due_date).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}</p>
 
                         <div className="mt-4 flex space-x-2">
                             <button onClick={(e)=>{e.stopPropagation();handleDelete(task.id)}} className="text-red-500 hover:text-red-700">

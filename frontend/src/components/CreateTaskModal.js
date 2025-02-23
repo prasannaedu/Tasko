@@ -4,12 +4,25 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('M'); // Default to Medium priority
-  const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0]);//this will give us the current date
+  const [dueDate, setDueDate] = useState(() => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for local timezone
+    return now.toISOString().slice(0, 16); // yyyy-MM-ddThh:mm
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onCreate({ title, description, priority });
     onClose();
+
+    setTitle('');
+    setDescription('');
+    setPriority('M');
+    setDueDate(() => {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      return now.toISOString().slice(0, 16);
+    });
   };
 
   if (!isOpen) return null;
