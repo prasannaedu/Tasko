@@ -49,14 +49,6 @@ const Dashboard=()=>{
                 console.error(error.response.data);
             }
         };
-        // const handleComplete=async(taskId)=>{
-        //     try{
-        //         await api.put(`/tasks/${taskId}/complete/`);
-        //         setTasks(tasks.map(task=>task.id===taskId ? {...task,completed:true}:task));
-        //     }catch(error){
-        //         console.error('Error completing task:',error);
-        //     }
-        // };
         const handleComplete = async (taskId) => {
             try {
               const task = tasks.find(task => task.id === taskId);
@@ -104,10 +96,10 @@ const Dashboard=()=>{
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {tasks.sort((a,b)=> a.completed - b.completed).map(task=>(
-                    <div key={task.id} className={`p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer ${task.completed ? 'bg-cyan-900' : 'bg-gray-800'}`} onClick={()=>handleTaskClick(task)}>
+                    <div key={task.id} className={`p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer ${task.completed ? 'bg-gray-900 border dark:border-gray-600' : 'bg-gray-800 border-y dark:border-gray-600'} border-y dark:border-gray-600`} onClick={()=>handleTaskClick(task)}>
                         <div className="flex justify-between items-center">
                             <h2 className="text-lg text-white font-semibold">{task.title}</h2>
-                            <input type="checkbox" checked={task.completed} onChange={()=>handleComplete(task.id)} className="ml-2"/>
+                            <input type="checkbox" checked={task.completed} onChange={(e) => {e.stopPropagation(); handleComplete(task.id);}}  className="ml-4 w-4 h-8 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" onClick={(e) => e.stopPropagation()}/>
                         </div>
                         <p className="text-gray-100 mt-2">{task.description}</p>
                         <p className="text-gray-100 mt-2"><strong>Priority: </strong>{task.priority}</p>
@@ -143,14 +135,6 @@ const Dashboard=()=>{
             {taskToUpdate &&(
                 <UpdateTaskModal task={taskToUpdate} onClose={()=>setTaskToUpdate(null)} onUpdate={handleUpdate}/>
             )}
-{/* 
-            <ul>
-                {tasks.map(task=>(
-                    <li key={task.id} className="text-gray-700">
-                        {task.title} - {task.completed ? '✅ Completed' : '⏱️ Pending'}
-                        </li>
-                    ))}
-            </ul> */}
             <CreateTaskModal
                 isOpen={isCreateTaskModalOpen}
                 onClose={() => setIsCreateTaskModalOpen(false)}
