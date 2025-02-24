@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser
+from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser,TaskDetail
 
 
 urlpatterns = [
     path('tasks/', TaskList.as_view(), name='task_list'),
+    path('tasks/<int:pk>/', TaskDetail.as_view(), name='task_detail'),
     path('tasks/<int:pk>/complete/', CompleteTask.as_view(), name='complete_task'),
     path('tasks/<int:pk>/delete/', DeleteTask.as_view(), name='delete_task'),
     path('quote/',DailyQuote.as_view(), name='daily_quote'),

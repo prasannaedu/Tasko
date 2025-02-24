@@ -77,8 +77,9 @@ const CreateAccount = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="ors w-full p-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <p class="invisible ors-invalid:visible ...">Please provide a valid email address.</p>
             </div>
             <div>
               <label className="block text-gray-300 mb-2">Password</label>

@@ -30,6 +30,12 @@ class TaskList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
     
+class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer 
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)  # Ensure the user is preserved
+
 class CompleteTask(generics.UpdateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer

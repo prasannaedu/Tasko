@@ -42,21 +42,41 @@ const Dashboard=()=>{
     
         const handleUpdate=async(updatedTask)=>{
             try{
-                await api.put(`/tasks/${updatedTask.id}/complete/`,updatedTask);
+                await api.put(`/tasks/${updatedTask.id}/`,updatedTask);
                 setTasks(tasks.map(task=>task.id===updatedTask.id ? updatedTask:task));
             }catch(error){
                 console.error('Error updating task:',error);
                 console.error(error.response.data);
             }
         };
-        const handleComplete=async(taskId)=>{
-            try{
+        // const handleComplete=async(taskId)=>{
+        //     try{
+        //         await api.put(`/tasks/${taskId}/complete/`);
+        //         setTasks(tasks.map(task=>task.id===taskId ? {...task,completed:true}:task));
+        //     }catch(error){
+        //         console.error('Error completing task:',error);
+        //     }
+        // };
+        const handleComplete = async (taskId) => {
+            try {
+              const task = tasks.find(task => task.id === taskId);
+              const updatedTask = { ...task, completed: !task.completed }; // Toggle completed status
+          
+              if (updatedTask.completed) {
+                // Mark as complete using the /tasks/{id}/complete/ endpoint
                 await api.put(`/tasks/${taskId}/complete/`);
-                setTasks(tasks.map(task=>task.id===taskId ? {...task,completed:true}:task));
-            }catch(error){
-                console.error('Error completing task:',error);
+              } else {
+                // Unmark as complete using the generic update endpoint (/tasks/{id}/)
+                await api.put(`/tasks/${taskId}/`, updatedTask);
+              }
+          
+              setTasks(tasks.map(task => 
+                task.id === taskId ? updatedTask : task
+              ));
+            } catch (error) {
+              console.error('Error completing task:', error);
             }
-        };
+          };
         const handleDelete=async(taskId)=>{
             try{
                 await api.delete(`/tasks/${taskId}/delete/`);
@@ -73,8 +93,8 @@ const Dashboard=()=>{
         }
 
     return(
-        <div className="bg-white p-6 rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+        <div className="bg-gray-900 p-6 rounded-lg shadow-md">
+            <h1 className="text-2xl text-white font-bold mb-4">Dashboard</h1>
             {/* <p className="text-gray-700">Track your tasks and progress.</p> */}
             <button
                 onClick={() => setIsCreateTaskModalOpen(true)}
@@ -83,24 +103,24 @@ const Dashboard=()=>{
             </button>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tasks.map(task=>(
-                    <div key={task.id} className="bg-sky-100 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={()=>handleTaskClick(task)}>
+                {tasks.sort((a,b)=> a.completed - b.completed).map(task=>(
+                    <div key={task.id} className={`p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer ${task.completed ? 'bg-cyan-900' : 'bg-gray-800'}`} onClick={()=>handleTaskClick(task)}>
                         <div className="flex justify-between items-center">
-                            <h2 className="text-lg font-semibold">{task.title}</h2>
+                            <h2 className="text-lg text-white font-semibold">{task.title}</h2>
                             <input type="checkbox" checked={task.completed} onChange={()=>handleComplete(task.id)} className="ml-2"/>
                         </div>
-                        <p className="text-gray-600 mt-2">{task.description}</p>
-                        <p className="text-gray-600 mt-2"><strong>Priority: </strong>{task.priority}</p>
-                        <p className="text-gray-600 mt-2"><strong>Due Date: </strong>{new Date(task.due_date).toLocaleDateString()}{" "}{new Date(task.due_date).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p className="text-gray-100 mt-2">{task.description}</p>
+                        <p className="text-gray-100 mt-2"><strong>Priority: </strong>{task.priority}</p>
+                        <p className="text-gray-100 mt-2"><strong>Due Date: </strong>{new Date(task.due_date).toLocaleDateString()}{" "}{new Date(task.due_date).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}</p>
 
                         <div className="mt-4 flex space-x-2">
-                            <button onClick={(e)=>{e.stopPropagation();handleDelete(task.id)}} className="text-red-500 hover:text-red-700">
+                            <button onClick={(e)=>{e.stopPropagation();handleDelete(task.id)}} className="text-blue-100 py-2 px-3 rounded-md bg-red-700 hover:text-white">
                                 Delete
                             </button>
                             <button onClick={(e)=>{
                                 e.stopPropagation();
                                 setTaskToUpdate(task);
-                            }} className="text-blue-500 hover:text-blue-700">
+                            }} className="text-blue-100 py-2 px-4 bg-blue-500 rounded-md hover:text-white" >
                                 Edit
                             </button>
 
@@ -110,13 +130,12 @@ const Dashboard=()=>{
             </div>
             {selectedTask&&(
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg shadow-md w-96">
-                        <h2 className="text-xl font-bold mb-4">{selectedTask.title}</h2>
-                        <p className="text-gray-600 mb-4" >{selectedTask.description}</p>
-                        <p className="text-gray-600 mb-4"><strong>Priority:</strong>{selectedTask.priority}</p>
-                        <p><strong>Due Date:</strong>{new Date(selectedTask.due_date).toLocaleString()}</p>
-
-                        <button onClick={()=>setSelectedTask(null)} className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700"> Close</button>
+                    <div className="bg-black p-6 rounded-lg shadow-md w-96">
+                        <h2 className="text-xl text-white font-bold mb-4">{selectedTask.title}</h2>
+                        <p className="text-white mb-4" >{selectedTask.description}</p>
+                        <p className="text-white mb-4"><strong>Priority: </strong>{selectedTask.priority}</p>
+                        <p className="text-white mb-4"><strong>Due Date: </strong>{new Date(selectedTask.due_date).toLocaleDateString()}{" "}{new Date(selectedTask.due_date).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                        <button onClick={()=>setSelectedTask(null)} className="bg-gray-800 text-white px-4 py-2 mt-2 rounded-md hover:bg-gray-700 "> Close</button>
                     </div>
                 </div>
             )}
