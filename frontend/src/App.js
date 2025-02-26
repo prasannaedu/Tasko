@@ -7,9 +7,11 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import CreateAccount from './pages/CreateAccount';
 import ForgotPassword from './pages/ForgotPassword';
-import Profile from './pages/Profile';
+// import Profile from './pages/Profile';
+import Profile from './components/Profile';
 import Dashboard from './pages/Dashboard';
 import Communities from './pages/Communities';
+import Explore from './pages/Explore';
 import Login from './pages/Login';
 
 
@@ -47,6 +49,7 @@ const AppContent=()=>{
               <Route path="/profile" element={<Profile />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/communities" element={<Communities />} />
+              <Route path="/explore" element={<Explore />} />
             </>
           ):(<Route path='*' element={<Navigate to="/"/>}/>)}
         </Routes>

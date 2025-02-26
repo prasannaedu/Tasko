@@ -23,6 +23,7 @@ const Navbar = () => {
                         {isAuthenticated ?(
                             <>
                                 <div className='hidden md:flex'>
+                                <Link to='/explore' className='text-gray-300 hover:text-white px-3 py-2'>Explore</Link>
                                 <Link to='/profile' className='text-gray-300 hover:text-white px-3 py-2'>Profile</Link>
                                 <Link to='/dashboard' className='text-gray-300 hover:text-white px-3 py-2'>Dashboard</Link>
                                 <Link to='/communities' className='text-gray-300 hover:text-white px-3 py-2'>Communities</Link>
@@ -43,6 +44,7 @@ const Navbar = () => {
                 </div>
                 {isMenuOpen&&isAuthenticated&&(
                     <div className='md:hidden mt-2 space-y-2'>
+                        <Link to='/explore' className='block text-gray-300 hover:text-white px-3 py-2'>Explore</Link>
                         <Link to="/profile" className="block text-gray-300 hover:text-white px-3 py-2">Profile</Link>
                         <Link to="/dashboard" className="block text-gray-300 hover:text-white px-3 py-2">Dashboard</Link>
                         <Link to="/communities" className="block text-gray-300 hover:text-white px-3 py-2">Communities</Link>

@@ -61,6 +61,9 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+# Media files (uploaded by users)
+MEDIA_URL = '/api/media/'  # URL prefix for media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Directory where media files are stored
 
 CORS_ALLOWED_ORIGINS = [ 'http://localhost:3000',]
 ALLOWED_HOSTS=['localhost','127.0.0.1']

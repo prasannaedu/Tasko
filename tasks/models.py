@@ -48,6 +48,13 @@ class UserProfile(models.Model):
     avatar=models.ImageField(upload_to='avatars/', null=True, blank=True)
     bio=models.TextField(null=True, blank=True)
     preferences=models.JSONField(default=dict)
+    cover_image = models.ImageField(upload_to='cover_images/', null=True, blank=True)
+    mobile_number = models.CharField(max_length=15, null=True, blank=True)
+    preferences = models.JSONField(default=dict)
+    joined_date = models.DateTimeField(auto_now_add=True)
+
+
+
     def __str__(self):
         return self.user.username
 
@@ -91,16 +98,21 @@ class Community(models.Model):
         return self.name
 
 class Post(models.Model):
-    user=models.ForeignKey(User, on_delete=models.CASCADE)
-    community=models.ForeignKey(Community, on_delete=models.CASCADE)
-    content=models.TextField()
-    image=models.ImageField(upload_to='post_images/', null=True, blank=True)
-    created_at=models.DateTimeField(auto_now_add=True)
-    hashtags=models.CharField(max_length=200, null=True, blank=True)
+    POST_TYPES = [
+        ('public', 'Public'),
+        ('community', 'Community'),
+    ]
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, null=True, blank=True)  # Optional
+    content = models.TextField()
+    image = models.ImageField(upload_to='post_images/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    hashtags = models.CharField(max_length=200, null=True, blank=True)
+    post_type = models.CharField(max_length=10, choices=POST_TYPES, default='public')  # New field
 
     def __str__(self):
-        return f"{self.user.username} in {self.community.name}"
+        return f"{self.user.username} - {self.post_type}"
 
 class Challenge(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)

@@ -143,6 +143,9 @@ class UserProfile(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user.userprofile
+
+    def perform_update(self, serializer):
+        serializer.save(partial=True)
     
 class Dashboard(APIView):
 
@@ -230,13 +233,24 @@ class PostList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
 
     def get_queryset(self):
-        community_id=self.kwargs['community_id']
-        return Post.objects.filter(community_id=community_id)
-    
-    def perform_create(self, serializer):
-        community_id=self.kwargs['community_id']
-        serializer.save(user=self.request.user, community_id=community_id)
+        post_type = self.request.query_params.get('type', 'public')
+        if post_type == 'community':
+            community_id = self.kwargs.get('community_id')
+            return Post.objects.filter(community_id=community_id, post_type='community')
+        return Post.objects.filter(post_type='public')
 
+    def perform_create(self, serializer):
+        post_type = self.request.data.get('post_type', 'public')
+        community_id = self.request.data.get('community_id')
+        serializer.save(user=self.request.user, post_type=post_type, community_id=community_id)
+class PublicPostList(generics.ListCreateAPIView):
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(post_type='public')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user, post_type='public')
+
+    
 class ChallengeList(generics.ListCreateAPIView):
     serializer_class = ChallengeSerializer
     def get_queryset(self):
@@ -251,3 +265,11 @@ class TrendingHashtags(APIView):
     def get(self,request):
         hashtags=Post.objects.values('hashtags').annotate(count=Count('hashtags')).order_by('-count')[:10]
         return Response(hashtags)
+    
+class UserPosts(generics.ListAPIView):
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        return Post.objects.filter(user=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

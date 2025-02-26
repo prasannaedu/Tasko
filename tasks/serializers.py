@@ -9,9 +9,13 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = ['id','title','description','priority','completed','due_date','title_en','title_es','title_te','title_hi','description_en','description_es','description_te','description_hi']
     
 class UserProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    avatar=serializers.ImageField(allow_null=True, required=False)
+    cover_image=serializers.ImageField(allow_null=True, required=False)
     class Meta:
         model = UserProfile
-        fields = ['bio','avatar','preferences']
+        fields = ['user','username','bio', 'avatar', 'cover_image', 'mobile_number', 'joined_date', 'preferences']
+        read_only_fields = ['user']
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,10 +38,12 @@ class CommunitySerializer(serializers.ModelSerializer):
         return value
     
 class PostSerializer(serializers.ModelSerializer):
-    user =serializers.ReadOnlyField(source='user.username')
+    user = serializers.ReadOnlyField(source='user.username')
+    image = serializers.ImageField(required=False)
+
     class Meta:
         model = Post
-        fields = ['id','user','community','content','image','hashtags','created_at']
+        fields = ['id', 'user', 'community', 'content', 'image', 'hashtags', 'created_at', 'post_type']
     
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:

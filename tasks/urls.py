@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser,TaskDetail
-
+from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser,TaskDetail,UserPosts,PublicPostList
+from django.conf import settings
+from django.views.static import serve
 
 urlpatterns = [
     path('tasks/', TaskList.as_view(), name='task_list'),
@@ -21,5 +22,8 @@ urlpatterns = [
     path('communities/', CommunityList.as_view(), name='community_list'),
     path('communities/<int:community_id>/posts/', PostList.as_view(), name='post_list'),
     path('register/', RegisterUser.as_view(), name='register_user'),
+    path('profile/posts/', UserPosts.as_view(), name='user_posts'),
+    path('posts/public/', PublicPostList.as_view(), name='public_posts'),
+    path('media/<path:path>', serve,{'document_root':settings.MEDIA_ROOT}),
 
 ]
