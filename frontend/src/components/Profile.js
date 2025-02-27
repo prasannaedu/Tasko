@@ -74,21 +74,16 @@ const Profile = () => {
       formData.append('mobile_number', profile.mobile_number);
       if (profile.avatar instanceof File) {
         formData.append('avatar', profile.avatar);
-      } else if (profile.avatar) {
-        formData.append('avatar', profile.avatar); // Existing URL
       }
       // if (profile.cover_image) formData.append('cover_image', profile.cover_image);
       if (profile.cover_image instanceof File) {
         formData.append('cover_image', profile.cover_image);
-      } else if (profile.cover_image) {
-        formData.append('cover_image', profile.cover_image); // Existing URL
       }
-
       for(let[key,value] of formData.entries()){
         console.log(key,value);
       }
 
-      await api.put('/profile/', formData, {
+      await api.patch('/profile/', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

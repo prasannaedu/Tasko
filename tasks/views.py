@@ -6,6 +6,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework import status
 from django.db.models import Count
 from django.contrib.auth.models import User
@@ -138,14 +139,33 @@ class RegisterUser(generics.CreateAPIView):
 
 class UserProfile(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
-    queryset = UserProfile.objects.all()
+    # queryset = UserProfile.objects.all()
 
+    def get_object(self):
+        return self.request.user.userprofile  # Directly get the logged-in user's profile
+    # def get_object(self):
+    #     return self.request.user.userprofile
+
+    # def perform_update(self, serializer):
+    #     serializer.save(partial=True)
+
+class UserProfileUpdateView(RetrieveUpdateAPIView):
+    # queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
 
     def get_object(self):
         return self.request.user.userprofile
 
-    def perform_update(self, serializer):
-        serializer.save(partial=True)
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=True  # <-- Critical for PATCH
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
     
 class Dashboard(APIView):
 
