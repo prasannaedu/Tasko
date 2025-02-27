@@ -35,7 +35,7 @@ const CreateAccount = () => {
       console.log('Registering user...');
       const response = await api.post('/register/', { username, email, password },{ headers: { Authorization: undefined } });
       console.log(response)
-      alert('Registration successful! Please log in.');
+      alert('Registration successful!');
       const loginResponse = await api.post('/token/', { username, password }); 
       const token = loginResponse.data.access; 
       login(token); // Log in the user after registration

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser,TaskDetail,UserPosts,PublicPostList, UserProfileUpdateView
+from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser,TaskDetail,UserPosts,PublicPostList, UserProfileUpdateView, PostViewSet, CommentCreateView
 from django.conf import settings
 from django.views.static import serve
 
@@ -24,6 +24,13 @@ urlpatterns = [
     path('register/', RegisterUser.as_view(), name='register_user'),
     path('profile/posts/', UserPosts.as_view(), name='user_posts'),
     path('posts/public/', PublicPostList.as_view(), name='public_posts'),
+    path('posts/<int:pk>/like/', PostViewSet.as_view({'post': 'like'}), name='like_post'),
+    path('posts/<int:pk>/save/', PostViewSet.as_view({'post': 'save_post'}), name='save_post'),
+    path('posts/<int:post_id>/comment/', CommentCreateView.as_view(), name='create_comment'),
+
+
+
+
     path('media/<path:path>', serve,{'document_root':settings.MEDIA_ROOT}),
 
 ]

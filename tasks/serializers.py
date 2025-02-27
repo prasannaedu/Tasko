@@ -1,6 +1,6 @@
 #to import rest_framework serializers moduel we use the following code
 from rest_framework import serializers
-from .models import Task , UserProfile, Category, Collaboration, Challenge, Community, Post, Badge, Achievement
+from .models import Task , UserProfile, Category, Collaboration, Challenge, Community, Post, Badge, Achievement, Comment
 from django.contrib.auth.models import User
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -36,15 +36,35 @@ class CommunitySerializer(serializers.ModelSerializer):
         if Community.objects.filter(name=value).exists():
             raise serializers.ValidationError('A community with that name already exists')
         return value
+class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'text', 'created_at']
     
 class PostSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     image = serializers.ImageField(required=False)
+    likes_count = serializers.SerializerMethodField()
+    comments = CommentSerializer(many=True, read_only=True)
+    is_liked = serializers.SerializerMethodField()
+    is_saved = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'user', 'community', 'content', 'image', 'hashtags', 'created_at', 'post_type']
-    
+        fields = ['id', 'user', 'community', 'content', 'image','likes_count', 
+                 'comments', 'is_liked', 'is_saved', 'hashtags', 'created_at', 'post_type']
+    def get_likes_count(self, obj):
+            return obj.likes.count()
+
+    def get_is_liked(self, obj):
+        user = self.context['request'].user
+        return user.is_authenticated and obj.likes.filter(id=user.id).exists()
+
+    def get_is_saved(self, obj):
+        user = self.context['request'].user
+        return user.is_authenticated and obj.saved_by.filter(id=user.id).exists()
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../api/api';
 import { FaMobileRetro} from "react-icons/fa6";
 import { MdDateRange } from "react-icons/md";
+import PostCard from './PostCard';
 
 
 
@@ -16,13 +17,29 @@ const Profile = () => {
   });
   const [editMode, setEditMode] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [savedPosts, setSavedPosts] = useState([]);
   
 
   useEffect(() => {
     fetchProfile();
     fetchUserPosts();
+    fetchSavedPosts();
   }, []);
 
+  
+   
+const fetchSavedPosts = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.get('/profile/saved_posts/', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSavedPosts(response.data);
+  } catch (error) {
+    console.error('Error fetching saved posts:', error);
+  }
+};
+  
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -64,6 +81,7 @@ const Profile = () => {
       console.error('Error fetching posts:', error);
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -200,6 +218,12 @@ const Profile = () => {
                   Posted on {new Date(post.created_at).toLocaleString()}
                 </p>
               </div>
+            ))}
+          </div>
+          <div className="mt-8">
+            <h2 className="text-xl font-bold mb-4">Saved Posts</h2>
+            {savedPosts.map((post) => (
+              <PostCard key={post.id} post={post} />
             ))}
           </div>
         </div>

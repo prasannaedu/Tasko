@@ -109,10 +109,20 @@ class Post(models.Model):
     image = models.ImageField(upload_to='post_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     hashtags = models.CharField(max_length=200, null=True, blank=True)
-    post_type = models.CharField(max_length=10, choices=POST_TYPES, default='public')  # New field
+    post_type = models.CharField(max_length=10, choices=POST_TYPES, default='public')
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    saved_by = models.ManyToManyField(User, related_name='saved_posts', blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.post_type}"
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.text[:20]}"
 
 class Challenge(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)

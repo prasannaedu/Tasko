@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Task, UserProfile, Category, Quote, Collaboration, Community, Post, Challenge
-from .serializers import TaskSerializer, UserProfileSerializer, CategorySerializer, CommunitySerializer, PostSerializer, ChallengeSerializer, UserSerializer
+from .serializers import TaskSerializer, UserProfileSerializer, CategorySerializer, CommunitySerializer, PostSerializer, ChallengeSerializer, UserSerializer,CommentSerializer
 from django.utils import timezone
 from rest_framework import generics
 from rest_framework.response import Response
@@ -14,6 +14,9 @@ import csv
 from django.http import HttpResponse
 from rest_framework.pagination import PageNumberPagination
 from tasks import models
+from rest_framework.decorators import action
+from rest_framework import permissions
+from rest_framework import viewsets
 
 # Create your views here.
 class TaskList(generics.ListCreateAPIView):
@@ -270,7 +273,39 @@ class PublicPostList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, post_type='public')
 
-    
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        post = self.get_object()
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+            return Response({'status': 'unliked'})
+        else:
+            post.likes.add(request.user)
+            return Response({'status': 'liked'})
+
+    @action(detail=True, methods=['post'])
+    def save_post(self, request, pk=None):
+        post = self.get_object()
+        if post.saved_by.filter(id=request.user.id).exists():
+            post.saved_by.remove(request.user)
+            return Response({'status': 'unsaved'})
+        else:
+            post.saved_by.add(request.user)
+            return Response({'status': 'saved'})
+
+class CommentCreateView(generics.CreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        post = Post.objects.get(pk=self.kwargs['post_id'])
+        serializer.save(user=self.request.user, post=post)
+
 class ChallengeList(generics.ListCreateAPIView):
     serializer_class = ChallengeSerializer
     def get_queryset(self):
