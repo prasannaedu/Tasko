@@ -78,6 +78,9 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['id', 'user', 'community', 'content', 'image','likes_count', 
                  'comments', 'is_liked', 'is_saved', 'hashtags', 'created_at', 'post_type']
+        extra_kwargs = {
+            'user': {'read_only': True}
+        }
     def get_likes_count(self, obj):
             return obj.likes.count()
 

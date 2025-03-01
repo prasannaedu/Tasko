@@ -17,6 +17,7 @@ from tasks import models
 from rest_framework.decorators import action
 from rest_framework import permissions
 from rest_framework import viewsets
+from rest_framework.exceptions import NotFound, PermissionDenied
 
 # Create your views here.
 class TaskList(generics.ListCreateAPIView):
@@ -287,6 +288,11 @@ class PublicPostList(generics.ListCreateAPIView):
             return [permissions.AllowAny()]
         # Require authentication for creating posts
         return [permissions.IsAuthenticated()]
+    def perform_create(self, serializer):
+    # Ensure only authenticated users can create posts
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied("Authentication required")
+        serializer.save(user=self.request.user, post_type='public')
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -364,5 +370,13 @@ class SavedPostsView(generics.ListAPIView):
 class PostDetail(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.AllowAny]  # Public access
-    lookup_field = 'id'  # Match URL parameter name
+    # permission_classes = [permissions.AllowAny]  # Public access
+    lookup_field = 'pk'  # Match URL parameter name
+
+
+    # def get_object(self):
+    #     try:
+    #         return super().get_object()
+    #     except Post.DoesNotExist:
+    #         raise NotFound(detail="Post not found", code=404)
+    
