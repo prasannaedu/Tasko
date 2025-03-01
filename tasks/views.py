@@ -266,12 +266,27 @@ class PostList(generics.ListCreateAPIView):
         post_type = self.request.data.get('post_type', 'public')
         community_id = self.request.data.get('community_id')
         serializer.save(user=self.request.user, post_type=post_type, community_id=community_id)
+# class PublicPostList(generics.ListCreateAPIView):
+#     serializer_class = PostSerializer
+#     queryset = Post.objects.filter(post_type='public')
+
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user, post_type='public')
+
 class PublicPostList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
-    queryset = Post.objects.filter(post_type='public')
+    queryset = Post.objects.select_related(
+        'user__userprofile'  # Important for performance
+    ).prefetch_related(
+        'comments', 'likes', 'saved_by'
+    ).filter(post_type='public')
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user, post_type='public')
+    def get_permissions(self):
+        # Allow anyone to view public posts
+        if self.request.method == 'GET':
+            return [permissions.AllowAny()]
+        # Require authentication for creating posts
+        return [permissions.IsAuthenticated()]
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -297,6 +312,12 @@ class PostViewSet(viewsets.ModelViewSet):
         else:
             post.saved_by.add(request.user)
             return Response({'status': 'saved'})
+    @action(detail=True, methods=['post'])
+    def share(self, request, pk=None):
+        post = self.get_object()
+        post.shares += 1
+        post.save()
+        return Response({'shares': post.shares})
 
 class CommentCreateView(generics.CreateAPIView):
     serializer_class = CommentSerializer
@@ -328,3 +349,20 @@ class UserPosts(generics.ListAPIView):
         return Post.objects.filter(user=self.request.user)
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class SavedPostsView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Get posts saved by the current user
+        return Post.objects.filter(saved_by=self.request.user).select_related(
+            'user__userprofile'
+        ).prefetch_related(
+            'comments', 'likes', 'saved_by'
+        ).order_by('-created_at')
+class PostDetail(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.AllowAny]  # Public access
+    lookup_field = 'id'  # Match URL parameter name

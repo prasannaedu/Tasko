@@ -21,7 +21,7 @@ const Explore = () => {
 
   return (
     <div className="bg-gray-900 p-6 rounded-lg shadow-md text-white max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Feed</h1>
+      {/* <h1 className="text-2xl font-bold mb-4">Feed</h1> */}
         <CreatePost onPostCreated={fetchPublicPosts} />
       {posts.map((post) => (
         // <div key={post.id} className="bg-gray-800 p-4 rounded-lg shadow-sm mb-4">

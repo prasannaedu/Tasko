@@ -112,6 +112,7 @@ class Post(models.Model):
     post_type = models.CharField(max_length=10, choices=POST_TYPES, default='public')
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     saved_by = models.ManyToManyField(User, related_name='saved_posts', blank=True)
+    shares = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username} - {self.post_type}"

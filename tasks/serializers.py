@@ -36,15 +36,38 @@ class CommunitySerializer(serializers.ModelSerializer):
         if Community.objects.filter(name=value).exists():
             raise serializers.ValidationError('A community with that name already exists')
         return value
+    
+
+class ChallengeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenge
+        fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)  # Ensure password is write-only
+    profile = UserProfileSerializer(source='userprofile')
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password','userprofile','profile']
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password']
+        )
+        return user
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
+    # user = serializers.ReadOnlyField(source='user.username')
+    user = UserSerializer(read_only=True) 
     
     class Meta:
         model = Comment
         fields = ['id', 'user', 'text', 'created_at']
-    
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
+    # user = serializers.ReadOnlyField(source='user.username')
+    user = UserSerializer(read_only=True) 
     image = serializers.ImageField(required=False)
     likes_count = serializers.SerializerMethodField()
     comments = CommentSerializer(many=True, read_only=True)
@@ -65,22 +88,3 @@ class PostSerializer(serializers.ModelSerializer):
     def get_is_saved(self, obj):
         user = self.context['request'].user
         return user.is_authenticated and obj.saved_by.filter(id=user.id).exists()
-class ChallengeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Challenge
-        fields = '__all__'
-
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)  # Ensure password is write-only
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        return user

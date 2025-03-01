@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser,TaskDetail,UserPosts,PublicPostList, UserProfileUpdateView, PostViewSet, CommentCreateView
+from .views import TaskList, CompleteTask, DeleteTask, DailyQuote, WeeklyPerformance, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, WeeklyPerformance, DailyQuote, ShareTask, UserProfile, Dashboard, CategoryList, SetReminder, Collaboration, Leaderboard, ExportTasks, ToggleDarkMode, PostList, CommunityList, RegisterUser,TaskDetail,UserPosts,PublicPostList, UserProfileUpdateView, PostViewSet, CommentCreateView, SavedPostsView, PostDetail
 from django.conf import settings
 from django.views.static import serve
 
@@ -27,7 +27,8 @@ urlpatterns = [
     path('posts/<int:pk>/like/', PostViewSet.as_view({'post': 'like'}), name='like_post'),
     path('posts/<int:pk>/save/', PostViewSet.as_view({'post': 'save_post'}), name='save_post'),
     path('posts/<int:post_id>/comment/', CommentCreateView.as_view(), name='create_comment'),
-
+    path('profile/saved_posts/', SavedPostsView.as_view(), name='saved_posts'),
+    path('posts/<int:pk>/', PostDetail.as_view(), name='post_detail'),
 
 
 

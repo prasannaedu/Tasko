@@ -29,7 +29,16 @@ const PostCard = ({ post }) => {
       console.error('Error saving post:', error);
     }
   };
-
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        `http://localhost:3000/posts/${post.id}`
+      );
+      alert('Link copied to clipboard!');
+    } catch (err) {
+      console.error('Sharing failed:', err);
+    }
+  };
   const handleComment = async (e) => {
     e.preventDefault();
     try {
@@ -47,13 +56,13 @@ const PostCard = ({ post }) => {
       {/* Header */}
       <div className="flex items-center mb-4">
         <img 
-          src={'https://placehold.co/40'} 
+          src={post.user.profile.avatar||'https://placehold.co/40'} 
           className="w-10 h-10 rounded-full mr-3"
           alt="Profile"
         />
-        {console.log(post.user)}
+        {/* {console.log(post.user)} */}
         <div>
-          <h3 className="font-semibold text-gray-200">{post.user}</h3>
+          <h3 className="font-semibold text-gray-200">{post.user.username}</h3>
           <p className="text-gray-400 text-sm">
             {new Date(post.created_at).toLocaleString()}
           </p>
@@ -94,7 +103,7 @@ const PostCard = ({ post }) => {
           <FaBookmark />
         </button>
         
-        <button className="text-gray-400">
+        <button onClick={handleShare} className="text-gray-400">
           <FaShare />
         </button>
       </div>
@@ -114,13 +123,14 @@ const PostCard = ({ post }) => {
         {comments.map(comment => (
           <div key={comment.id} className="flex items-start mb-3">
             <img
-              src={comment.user.profile.avatar || 'https://placehold.co/30'}
+              src={comment.user.profile.avatar||'https://placehold.co/30'}
               className="w-6 h-6 rounded-full mr-2"
               alt="Profile"
             />
+            {/* {console.log(comment)} */}
             <div className="bg-gray-700 p-2 rounded-lg flex-1">
               <p className="text-gray-200 text-sm font-medium">
-                {comment.user.username}
+                {comment.user.profile.username}
               </p>
               <p className="text-gray-300 text-sm">{comment.text}</p>
             </div>

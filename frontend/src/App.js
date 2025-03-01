@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import Communities from './pages/Communities';
 import Explore from './pages/Explore';
 import Login from './pages/Login';
+import PostDetailPage from './components/PostDetailPage';
 
 
 
@@ -43,6 +44,7 @@ const AppContent=()=>{
           <Route path='/home' element={<Home/>}/>
           <Route path="/create-account" element={<CreateAccount />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/posts/:postId" element={<PostDetailPage />} />
           {isAuthenticated?(
             <>
               {/* <Navbar /> */}

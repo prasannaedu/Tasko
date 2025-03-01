@@ -21,8 +21,8 @@ const Login=()=>{
             const response=await api.post('/token/',{username,password});
             login(response.data.access);
             // localStorage.setItem('token',response.data.access);
-            console.log(response.data.access);
-            console.log('Successfully logged in')
+            // console.log(response.data.access);
+            // console.log('Successfully logged in')
             navigate('/dashboard');
         }
         catch(error){

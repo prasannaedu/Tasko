@@ -47,7 +47,7 @@ const fetchSavedPosts = async () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       // setProfile(response.data);
-      console.log(response.data);
+      // console.log(response.data);
       setProfile({
         ...response.data,
         avatar: response.data.avatar || null, // Ensure avatar is not undefined
@@ -117,7 +117,7 @@ const fetchSavedPosts = async () => {
 
   return (
   <div className="bg-gray-900 p-6 rounded-lg shadow-md text-white">
-    <h1 className="text-2xl font-bold mb-4">Profile</h1>
+    {/* <h1 className="text-2xl font-bold mb-4">Profile</h1> */}
 
     {editMode ? (
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -202,29 +202,19 @@ const fetchSavedPosts = async () => {
           >
             Edit Profile
           </button>
-          <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4">My Posts</h2>
-            {posts.map((post) => (
-              <div key={post.id} className="bg-gray-800 p-4 border border-gray-100  rounded-lg shadow-sm mb-4">
-                <p className="text-gray-300">{post.content}</p>
-                {post.image && (
-                  <img
-                    src={`${post.image}`}
-                    alt="Post"
-                    className="mt-2 rounded-md"
-                  />
-                )}
-                <p className="text-gray-400 text-sm mt-2">
-                  Posted on {new Date(post.created_at).toLocaleString()}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4">Saved Posts</h2>
-            {savedPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
+        </div>
+        <div className="mt-8 bg-gray-900  rounded-lg shadow-md text-white max-w-2xl mx-auto  ">
+          <h2 className="text-xl font-bold mb-4">My Posts</h2>
+          {posts.map((post) => (
+          <PostCard key={post.id} post={post} />
+          ))}   
+        </div>
+        <div className="mt-4 bg-gray-900  rounded-lg shadow-md text-white max-w-2xl mx-auto">
+          <h2 className="text-xl font-bold mb-4">Saved Posts</h2>
+          <div className="">
+          {savedPosts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
           </div>
         </div>
       </div>
