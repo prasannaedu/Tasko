@@ -370,13 +370,13 @@ class SavedPostsView(generics.ListAPIView):
 class PostDetail(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    # permission_classes = [permissions.AllowAny]  # Public access
+    permission_classes = [permissions.AllowAny]  # Public access
     lookup_field = 'pk'  # Match URL parameter name
 
 
-    # def get_object(self):
-    #     try:
-    #         return super().get_object()
-    #     except Post.DoesNotExist:
-    #         raise NotFound(detail="Post not found", code=404)
+    def get_object(self):
+        try:
+            return super().get_object()
+        except Post.DoesNotExist:
+            raise NotFound(detail="Post not found", code=404)
     

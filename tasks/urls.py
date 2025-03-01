@@ -29,6 +29,7 @@ urlpatterns = [
     path('posts/<int:post_id>/comment/', CommentCreateView.as_view(), name='create_comment'),
     path('profile/saved_posts/', SavedPostsView.as_view(), name='saved_posts'),
     path('posts/<int:pk>/', PostDetail.as_view(), name='post_detail'),
+    path('posts/<int:pk>', PostDetail.as_view()),
 
 
 
